@@ -166,7 +166,7 @@ void game_loop(void)
         SDL_Log("%f", elapsed_time);
         last_tick = current_tick;
         game_update(elapsed_time);
-        game_render(elapsed_time);
+        game_render();
     }
 }
 
@@ -232,4 +232,22 @@ void update_ball(ball_t *ball, float elapsed)
 {
     ball->x += ball->x_speed * elapsed;
     ball->y += ball->y_speed * elapsed;
+
+    if (ball->x < (BALL_SIZE/2))
+    {
+        ball->x_speed = fabs(ball->x_speed);
+    }
+    if( ball->x > (WIDTH - BALL_SIZE)/2 )
+    {
+        ball->x_speed = -fabs(ball->x_speed);
+    }
+
+    if (ball->y < (BALL_SIZE/2))
+    {
+        ball->y_speed = fabs(ball->y_speed);
+    }
+    if( ball->y > (HEIGHT - BALL_SIZE)/2 )
+    {
+        ball->y_speed = -fabs(ball->y_speed);
+    }
 }
