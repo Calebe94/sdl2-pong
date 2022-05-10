@@ -11,13 +11,26 @@
  * MACROS
  *************************/
 #define BALL_SIZE  10
+#define BALL_SPEED 120
 #define WIDTH      800
 #define HEIGHT     600
 
 /******** Colors *********/
 #define BLACK      0, 0, 0, 0
+#define WHITE      255, 255, 255, 255
 #define BLUE       0, 0, 255, 255
 #define RED        255, 0, 0, 255
+
+/*************************
+ * Typedefs
+ *************************/
+typedef struct ball_entity {
+    float x;
+    float y;
+    float x_speed;
+    float y_speed;
+    int size;
+} ball_t;
 
 /*************************
  * GLOBAL Variables
@@ -25,17 +38,7 @@
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 bool run_game = true;
-
-/*************************
- * Typedefs
- *************************/
-typedef struct ball {
-    float x;
-    float y;
-    float x_speed;
-    float y_speed;
-    int size;
-} ball_t;
+ball_t ball = { 0 };
 
 /*************************
  * Prototypes
@@ -46,7 +49,7 @@ bool game_initialize(void);
 
 void game_update(float elapsed);
 
-void game_render(float elapsed);
+void game_render();
 
 void game_close(void);
 
@@ -55,9 +58,13 @@ void game_loop(void);
 void handle_events(void);
 
 /******** Entities *********/
+void create_object();
+
 ball_t create_ball(int size);
 
-void create_object();
+void render_ball(const ball_t *ball);
+
+void update_ball(ball_t *ball, float elapsed);
 
 /*************************
  * Main
@@ -73,6 +80,7 @@ int main(int argc, char *argv[])
     }
     if (game_initialize())
     {
+        ball = create_ball(BALL_SIZE);
         game_loop();
     }
 
@@ -125,16 +133,16 @@ bool game_initialize(void)
 
 void game_update(float elapsed)
 {
-
+    update_ball(&ball, elapsed);
 }
 
-void game_render(float elapsed)
+void game_render()
 {
     SDL_SetRenderDrawColor(renderer, BLACK);
-
     SDL_RenderClear(renderer);
 
-    create_object();
+    render_ball(&ball);
+
     SDL_RenderPresent(renderer);
 }
 
@@ -175,6 +183,11 @@ void handle_events(void)
     }
 }
 
+bool coin_flip(void)
+{
+    return (bool)((rand() % 2) == 1);
+}
+
 /******** Entities *********/
 
 void create_object()
@@ -192,10 +205,31 @@ void create_object()
 ball_t create_ball(int size)
 {
     ball_t ball = {
-        .x = (WIDTH/2) / (size/2),
-        .y = (HEIGHT/2) / (size/2),
-        .size = 10,
+        .x = (WIDTH/2) - (size/2),
+        .y = (HEIGHT/2) - (size/2),
+        .size = size,
+        .x_speed = BALL_SPEED * (coin_flip()?1:-1),
+        .y_speed = BALL_SPEED * (coin_flip()?1:-1),
     };
 
     return ball;
+}
+
+void render_ball(const ball_t *ball)
+{
+    int size = ball->size;
+    SDL_Rect rect = {
+        .x = ball->x - (size/2),
+        .y = ball->y - (size/2),
+        .w = size,
+        .h = size
+    };
+    SDL_SetRenderDrawColor(renderer, WHITE);
+    SDL_RenderFillRect(renderer, &rect);
+}
+
+void update_ball(ball_t *ball, float elapsed)
+{
+    ball->x += ball->x_speed * elapsed;
+    ball->y += ball->y_speed * elapsed;
 }
