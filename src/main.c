@@ -10,10 +10,14 @@
 /*************************
  * MACROS
  *************************/
-#define BALL_SIZE  10
-#define BALL_SPEED 120
-#define WIDTH      800
-#define HEIGHT     600
+#define WIDTH         800
+#define HEIGHT        600
+#define BALL_SIZE     10
+#define BALL_SPEED    120
+#define PLAYER_WIDTH  20
+#define PLAYER_HEIGHT 75
+#define PLAYER_MARGIN 10
+#define PLAYER_SPEED  150.0f
 
 /******** Colors *********/
 #define BLACK      0, 0, 0, 0
@@ -32,6 +36,12 @@ typedef struct ball_entity {
     int size;
 } ball_t;
 
+typedef struct player {
+    int score;
+    float y;
+    float x;
+} player_t;
+
 /*************************
  * GLOBAL Variables
  *************************/
@@ -39,6 +49,8 @@ SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 bool run_game = true;
 ball_t ball = { 0 };
+player_t player1 = { 0 };
+player_t player2 = { 0 };
 
 /*************************
  * Prototypes
@@ -66,6 +78,13 @@ void render_ball(const ball_t *ball);
 
 void update_ball(ball_t *ball, float elapsed);
 
+/******** Players *********/
+player_t create_player(void);
+
+void update_players(float elapsed);
+
+void render_players(void);
+
 /*************************
  * Main
  *************************/
@@ -81,6 +100,8 @@ int main(int argc, char *argv[])
     if (game_initialize())
     {
         ball = create_ball(BALL_SIZE);
+        player1 = create_player();
+        player2 = create_player();
         game_loop();
     }
 
@@ -142,6 +163,7 @@ void game_render()
     SDL_RenderClear(renderer);
 
     render_ball(&ball);
+    render_players();
 
     SDL_RenderPresent(renderer);
 }
@@ -237,7 +259,7 @@ void update_ball(ball_t *ball, float elapsed)
     {
         ball->x_speed = fabs(ball->x_speed);
     }
-    if( ball->x > (WIDTH - BALL_SIZE)/2 )
+    if( ball->x > WIDTH - (BALL_SIZE/2) )
     {
         ball->x_speed = -fabs(ball->x_speed);
     }
@@ -246,8 +268,42 @@ void update_ball(ball_t *ball, float elapsed)
     {
         ball->y_speed = fabs(ball->y_speed);
     }
-    if( ball->y > (HEIGHT - BALL_SIZE)/2 )
+    if( ball->y > HEIGHT - (BALL_SIZE/2) )
     {
         ball->y_speed = -fabs(ball->y_speed);
     }
+}
+
+/******** Players *********/
+player_t create_player(void)
+{
+    player_t player = {
+        .y = HEIGHT / 2,
+    };
+
+    return player;
+
+}
+
+void update_players(float elapsed);
+
+void render_players(void)
+{
+    SDL_SetRenderDrawColor(renderer, BLUE);
+    SDL_Rect player1_rect = {
+        .x = PLAYER_MARGIN,
+        .y = player1.y - (PLAYER_HEIGHT/2),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+    SDL_RenderFillRect(renderer, &player1_rect);
+
+    SDL_SetRenderDrawColor(renderer, RED);
+    SDL_Rect player2_rect = {
+        .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
+        .y = player2.y - (PLAYER_HEIGHT/2),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+    SDL_RenderFillRect(renderer, &player2_rect);
 }
