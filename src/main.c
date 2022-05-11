@@ -1,6 +1,7 @@
 /*************************
  * INCLUDES
  *************************/
+#include <SDL2/SDL_rect.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -85,6 +86,10 @@ void update_players(float elapsed);
 
 void render_players(void);
 
+void move_player_up(player_t *player);
+
+void move_player_down(player_t *player);
+
 /*************************
  * Main
  *************************/
@@ -156,6 +161,33 @@ void game_update(float elapsed)
 {
     update_ball(&ball, elapsed);
     update_players(elapsed);
+    SDL_Rect player1_rect = {
+        .x = PLAYER_MARGIN,
+        .y = (int)(player1.y - PLAYER_HEIGHT/2),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+
+    SDL_Rect ball_rect = {
+        .x = ball.x - (ball.size / 2),
+        .y = ball.y - (ball.size / 2),
+        .w = ball.size,
+        .h = ball.size,
+    };
+    if(SDL_HasIntersection(&ball_rect, &player1_rect))
+    {
+        ball.x_speed = fabs(ball.x_speed);
+    }
+    SDL_Rect player2_rect = {
+        .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
+        .y = (int)(player2.y - PLAYER_HEIGHT/2),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+    if(SDL_HasIntersection(&ball_rect, &player2_rect))
+    {
+        ball.x_speed = -fabs(ball.x_speed);
+    }
 }
 
 void game_render()
@@ -206,9 +238,30 @@ void handle_events(void)
                 break;
             }
             case SDL_KEYDOWN: {
-                break;
+                switch (event.key.keysym.sym) {
+                    case SDLK_w: {
+                        SDL_Log("Player 1 UP");
+                        move_player_up(&player1);
+                        break;
+                    }
+                    case SDLK_s: {
+                        SDL_Log("Player 1 DOWN");
+                        move_player_down(&player1);
+                        break;
+                    }
+                    case SDLK_UP: {
+                        SDL_Log("Player 2 UP");
+                        move_player_up(&player2);
+                        break;
+                    }
+                    case SDLK_DOWN: {
+                        SDL_Log("Player 2 DOWN");
+                        move_player_down(&player2);
+                        break;
+                    }
+                    break;
+                }
             }
-
         }
     }
 }
@@ -295,7 +348,22 @@ player_t create_player(void)
 
 void update_players(float elapsed)
 {
-    SDL_Log("Update players\n");
+    if (player1.y < PLAYER_HEIGHT/2)
+    {
+        player1.y = PLAYER_HEIGHT/2;
+    }
+    if (player1.y > (HEIGHT - (PLAYER_HEIGHT/2)) )
+    {
+        player1.y = (HEIGHT - (PLAYER_HEIGHT/2));
+    }
+    if (player2.y < PLAYER_HEIGHT/2)
+    {
+        player2.y = PLAYER_HEIGHT/2;
+    }
+    if (player2.y > (HEIGHT - (PLAYER_HEIGHT/2)) )
+    {
+        player2.y = (HEIGHT - (PLAYER_HEIGHT/2));
+    }
 }
 
 void render_players(void)
@@ -317,4 +385,14 @@ void render_players(void)
         .h = PLAYER_HEIGHT,
     };
     SDL_RenderFillRect(renderer, &player2_rect);
+}
+
+void move_player_up(player_t *player)
+{
+    player->y -= 20;
+}
+
+void move_player_down(player_t *player)
+{
+    player->y += 20;
 }
