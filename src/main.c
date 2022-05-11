@@ -163,14 +163,14 @@ void game_update(float elapsed)
     update_players(elapsed);
     SDL_Rect player1_rect = {
         .x = PLAYER_MARGIN,
-        .y = (int)(player1.y - PLAYER_HEIGHT/2),
+        .y = (int)(player1.y - ((float)PLAYER_HEIGHT/2)),
         .w = PLAYER_WIDTH,
         .h = PLAYER_HEIGHT,
     };
 
     SDL_Rect ball_rect = {
-        .x = ball.x - (ball.size / 2),
-        .y = ball.y - (ball.size / 2),
+        .x = ball.x - ((float)ball.size / 2),
+        .y = ball.y - ((float)ball.size / 2),
         .w = ball.size,
         .h = ball.size,
     };
@@ -180,7 +180,7 @@ void game_update(float elapsed)
     }
     SDL_Rect player2_rect = {
         .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
-        .y = (int)(player2.y - PLAYER_HEIGHT/2),
+        .y = (int)(player2.y - ((float)PLAYER_HEIGHT/2) ),
         .w = PLAYER_WIDTH,
         .h = PLAYER_HEIGHT,
     };
@@ -316,20 +316,20 @@ void update_ball(ball_t *ball, float elapsed)
     ball->x += ball->x_speed * elapsed;
     ball->y += ball->y_speed * elapsed;
 
-    if (ball->x < (BALL_SIZE/2))
+    if (ball->x < ((float)BALL_SIZE/2))
     {
         ball->x_speed = fabs(ball->x_speed);
     }
-    if( ball->x > WIDTH - (BALL_SIZE/2) )
+    if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
     {
         ball->x_speed = -fabs(ball->x_speed);
     }
 
-    if (ball->y < (BALL_SIZE/2))
+    if (ball->y < ((float)BALL_SIZE/2))
     {
         ball->y_speed = fabs(ball->y_speed);
     }
-    if( ball->y > HEIGHT - (BALL_SIZE/2) )
+    if( ball->y > HEIGHT - ((float)BALL_SIZE/2) )
     {
         ball->y_speed = -fabs(ball->y_speed);
     }
@@ -339,7 +339,7 @@ void update_ball(ball_t *ball, float elapsed)
 player_t create_player(void)
 {
     player_t player = {
-        .y = HEIGHT / 2,
+        .y = ((float)HEIGHT / 2),
     };
 
     return player;
@@ -348,21 +348,21 @@ player_t create_player(void)
 
 void update_players(float elapsed)
 {
-    if (player1.y < PLAYER_HEIGHT/2)
+    if (player1.y < ((float)PLAYER_HEIGHT/2))
     {
-        player1.y = PLAYER_HEIGHT/2;
+        player1.y = ((float)PLAYER_HEIGHT/2);
     }
-    if (player1.y > (HEIGHT - (PLAYER_HEIGHT/2)) )
+    if (player1.y > (HEIGHT - ((float)PLAYER_HEIGHT/2)) )
     {
-        player1.y = (HEIGHT - (PLAYER_HEIGHT/2));
+        player1.y = (HEIGHT - ((float)PLAYER_HEIGHT/2));
     }
-    if (player2.y < PLAYER_HEIGHT/2)
+    if (player2.y < ((float)PLAYER_HEIGHT/2))
     {
-        player2.y = PLAYER_HEIGHT/2;
+        player2.y = ((float)PLAYER_HEIGHT/2);
     }
-    if (player2.y > (HEIGHT - (PLAYER_HEIGHT/2)) )
+    if (player2.y > (HEIGHT - ((float)PLAYER_HEIGHT/2)) )
     {
-        player2.y = (HEIGHT - (PLAYER_HEIGHT/2));
+        player2.y = (HEIGHT - ((float)PLAYER_HEIGHT/2));
     }
 }
 
@@ -371,7 +371,7 @@ void render_players(void)
     SDL_SetRenderDrawColor(renderer, BLUE);
     SDL_Rect player1_rect = {
         .x = PLAYER_MARGIN,
-        .y = player1.y - (PLAYER_HEIGHT/2),
+        .y = player1.y - ((float)PLAYER_HEIGHT/2),
         .w = PLAYER_WIDTH,
         .h = PLAYER_HEIGHT,
     };
@@ -380,7 +380,7 @@ void render_players(void)
     SDL_SetRenderDrawColor(renderer, RED);
     SDL_Rect player2_rect = {
         .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
-        .y = player2.y - (PLAYER_HEIGHT/2),
+        .y = player2.y - ((float)PLAYER_HEIGHT/2),
         .w = PLAYER_WIDTH,
         .h = PLAYER_HEIGHT,
     };
