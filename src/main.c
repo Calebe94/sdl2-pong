@@ -27,6 +27,11 @@
 #define PLAYER_MARGIN 10
 #define PLAYER_SPEED  400.0f
 
+// https://www.wfonts.com/font/8bit-wonder
+/* #define FONT_NAME "8-BIT_WONDER.ttf" */
+// https://www.fontspace.com/pixeboy-font-f43730
+#define FONT_NAME "Pixeboy.ttf"
+
 /******** Colors *********/
 #define BLACK      0, 0, 0, 0
 #define WHITE      255, 255, 255, 255
@@ -62,6 +67,7 @@ player_t player2 = { 0 };
 bool playing = false;
 bool should_restart_round = false;
 uint32_t pause_timer = 0;
+uint32_t rounds = 0;
 
 /*************************
  * Prototypes
@@ -113,6 +119,8 @@ void move_player_down(player_t *player, float ticks);
 void restart_player_position(player_t *player);
 
 void render_score(player_t player, uint32_t x, uint32_t y);
+
+void render_message(const char *message, uint32_t x, uint32_t y, uint32_t w, uint32_t h);
 /*************************
  * Main
  *************************/
@@ -196,11 +204,27 @@ void game_render()
     SDL_SetRenderDrawColor(renderer, BLACK);
     SDL_RenderClear(renderer);
 
+    if (playing == false && rounds == 0)
+    {
+        render_message("Press space", WIDTH/2 - 300/2, HEIGHT/3 - 40/2, 300, 40);
+        render_message("to start", WIDTH/2 - 300/2, HEIGHT/3 + 40/2 , 300, 40);
+    }
+    else if (playing == false && rounds > 0)
+    {
+        render_message("Game paused", WIDTH/2 - 300/2, HEIGHT/3 - 40/2, 300, 40);
+    }
+
     render_ball(&ball);
     render_players();
     render_score(player1, WIDTH/2 - (100*2), 0);
     render_score(player2, WIDTH/2 + (100), 0);
 
+    if (should_restart_round)
+    {
+        char message[10];
+        sprintf(message, "%d : %d", player1.score, player2.score);
+        render_message(message, WIDTH/2 - 300/2, HEIGHT/3 + 40, 300, 40);
+    }
     SDL_RenderPresent(renderer);
 }
 
@@ -245,6 +269,10 @@ void handle_events(void)
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE: {
                         playing = !playing;
+                        if (rounds == 0)
+                        {
+                            rounds++;
+                        }
                         SDL_Log("Game %s!", playing?"started":"paused");
                         break;
                     }
@@ -261,6 +289,7 @@ void restart_round(void)
     restart_ball_position(&ball);
     should_restart_round = true;
     pause_timer = SDL_GetTicks();
+    rounds++;
     /* restart_player_position(&player1); */
     /* restart_player_position(&player2); */
 }
@@ -498,12 +527,10 @@ void render_score(player_t player, uint32_t x, uint32_t y)
     char score[128];
     sprintf(score, "%d", player.score);
 
-    // https://www.wfonts.com/font/8bit-wonder
-    TTF_Font *Sans = TTF_OpenFont("8-BIT_WONDER.ttf", 24);
+    TTF_Font *Sans = TTF_OpenFont(FONT_NAME, 24);
 
     if(Sans)
     {
-        /* SDL_Log("Exibindo mensagem do score %s", score); */
         SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, score,  White);
         SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
         SDL_Rect Message_rect; //create a rect
@@ -520,5 +547,30 @@ void render_score(player_t player, uint32_t x, uint32_t y)
         SDL_DestroyTexture(Message);
         TTF_CloseFont(Sans);
     }
+}
 
+void render_message(const char *message, uint32_t x, uint32_t y, uint32_t w, uint32_t h)
+{
+    SDL_Color White = {255, 255, 255, 255};
+
+    TTF_Font *Sans = TTF_OpenFont(FONT_NAME, 24);
+
+    if(Sans)
+    {
+        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, message,  White);
+        SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+        SDL_Rect Message_rect; //create a rect
+        Message_rect.x = x;  //controls the rect's x coordinate
+        Message_rect.y = y; // controls the rect's y coordinte
+        Message_rect.w = w; // controls the width of the rect
+        Message_rect.h = h; // controls the height of the rect
+
+        SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+        /* SDL_RenderPresent(renderer); */
+
+        // Don't forget to free your surface and texture
+        SDL_FreeSurface(surfaceMessage);
+        SDL_DestroyTexture(Message);
+        TTF_CloseFont(Sans);
+    }
 }
