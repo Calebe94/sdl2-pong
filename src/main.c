@@ -2,6 +2,7 @@
  * INCLUDES
  *************************/
 #include <SDL2/SDL_rect.h>
+#include <SDL2/SDL_scancode.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -18,7 +19,7 @@
 #define PLAYER_WIDTH  20
 #define PLAYER_HEIGHT 75
 #define PLAYER_MARGIN 10
-#define PLAYER_SPEED  150.0f
+#define PLAYER_SPEED  200.0f
 
 /******** Colors *********/
 #define BLACK      0, 0, 0, 0
@@ -79,16 +80,22 @@ void render_ball(const ball_t *ball);
 
 void update_ball(ball_t *ball, float elapsed);
 
+void handle_colisions(void);
+
 /******** Players *********/
 player_t create_player(void);
 
 void update_players(float elapsed);
 
+void handle_players_bounds(void);
+
+void handle_players_inputs(float elapsed);
+
 void render_players(void);
 
-void move_player_up(player_t *player);
+void move_player_up(player_t *player, float ticks);
 
-void move_player_down(player_t *player);
+void move_player_down(player_t *player, float ticks);
 
 /*************************
  * Main
@@ -161,33 +168,7 @@ void game_update(float elapsed)
 {
     update_ball(&ball, elapsed);
     update_players(elapsed);
-    SDL_Rect player1_rect = {
-        .x = PLAYER_MARGIN,
-        .y = (int)(player1.y - ((float)PLAYER_HEIGHT/2)),
-        .w = PLAYER_WIDTH,
-        .h = PLAYER_HEIGHT,
-    };
-
-    SDL_Rect ball_rect = {
-        .x = ball.x - ((float)ball.size / 2),
-        .y = ball.y - ((float)ball.size / 2),
-        .w = ball.size,
-        .h = ball.size,
-    };
-    if(SDL_HasIntersection(&ball_rect, &player1_rect))
-    {
-        ball.x_speed = fabs(ball.x_speed);
-    }
-    SDL_Rect player2_rect = {
-        .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
-        .y = (int)(player2.y - ((float)PLAYER_HEIGHT/2) ),
-        .w = PLAYER_WIDTH,
-        .h = PLAYER_HEIGHT,
-    };
-    if(SDL_HasIntersection(&ball_rect, &player2_rect))
-    {
-        ball.x_speed = -fabs(ball.x_speed);
-    }
+    handle_colisions();
 }
 
 void game_render()
@@ -237,31 +218,6 @@ void handle_events(void)
                 SDL_Log("Closing the game...");
                 break;
             }
-            case SDL_KEYDOWN: {
-                switch (event.key.keysym.sym) {
-                    case SDLK_w: {
-                        SDL_Log("Player 1 UP");
-                        move_player_up(&player1);
-                        break;
-                    }
-                    case SDLK_s: {
-                        SDL_Log("Player 1 DOWN");
-                        move_player_down(&player1);
-                        break;
-                    }
-                    case SDLK_UP: {
-                        SDL_Log("Player 2 UP");
-                        move_player_up(&player2);
-                        break;
-                    }
-                    case SDLK_DOWN: {
-                        SDL_Log("Player 2 DOWN");
-                        move_player_down(&player2);
-                        break;
-                    }
-                    break;
-                }
-            }
         }
     }
 }
@@ -288,8 +244,8 @@ void create_object()
 ball_t create_ball(int size)
 {
     ball_t ball = {
-        .x = (WIDTH/2) - (size/2),
-        .y = (HEIGHT/2) - (size/2),
+        .x = ((float)WIDTH/2) - ((float)size/2),
+        .y = ((float)HEIGHT/2) - ((float)size/2),
         .size = size,
         .x_speed = BALL_SPEED * (coin_flip()?1:-1),
         .y_speed = BALL_SPEED * (coin_flip()?1:-1),
@@ -302,8 +258,8 @@ void render_ball(const ball_t *ball)
 {
     int size = ball->size;
     SDL_Rect rect = {
-        .x = ball->x - (size/2),
-        .y = ball->y - (size/2),
+        .x = ball->x - ((float)size/2),
+        .y = ball->y - ((float)size/2),
         .w = size,
         .h = size
     };
@@ -335,6 +291,37 @@ void update_ball(ball_t *ball, float elapsed)
     }
 }
 
+void handle_colisions(void)
+{
+    SDL_Rect player1_rect = {
+        .x = PLAYER_MARGIN,
+        .y = (int)(player1.y - ((float)PLAYER_HEIGHT/2)),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+
+    SDL_Rect ball_rect = {
+        .x = ball.x - ((float)ball.size / 2),
+        .y = ball.y - ((float)ball.size / 2),
+        .w = ball.size,
+        .h = ball.size,
+    };
+    if(SDL_HasIntersection(&ball_rect, &player1_rect))
+    {
+        ball.x_speed = fabs(ball.x_speed);
+    }
+    SDL_Rect player2_rect = {
+        .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
+        .y = (int)(player2.y - ((float)PLAYER_HEIGHT/2) ),
+        .w = PLAYER_WIDTH,
+        .h = PLAYER_HEIGHT,
+    };
+    if(SDL_HasIntersection(&ball_rect, &player2_rect))
+    {
+        ball.x_speed = -fabs(ball.x_speed);
+    }
+}
+
 /******** Players *********/
 player_t create_player(void)
 {
@@ -347,6 +334,12 @@ player_t create_player(void)
 }
 
 void update_players(float elapsed)
+{
+    handle_players_inputs(elapsed);
+    handle_players_bounds();
+}
+
+void handle_players_bounds(void)
 {
     if (player1.y < ((float)PLAYER_HEIGHT/2))
     {
@@ -363,6 +356,27 @@ void update_players(float elapsed)
     if (player2.y > (HEIGHT - ((float)PLAYER_HEIGHT/2)) )
     {
         player2.y = (HEIGHT - ((float)PLAYER_HEIGHT/2));
+    }
+}
+
+void handle_players_inputs(float elapsed)
+{
+    const uint8_t *keyboard_state = SDL_GetKeyboardState(NULL);
+    if (keyboard_state[SDL_SCANCODE_W])
+    {
+        move_player_up(&player1, elapsed);
+    }
+    if (keyboard_state[SDL_SCANCODE_S])
+    {
+        move_player_down(&player1, elapsed);
+    }
+    if (keyboard_state[SDL_SCANCODE_UP])
+    {
+        move_player_up(&player2, elapsed);
+    }
+    if (keyboard_state[SDL_SCANCODE_DOWN])
+    {
+        move_player_down(&player2, elapsed);
     }
 }
 
@@ -387,12 +401,12 @@ void render_players(void)
     SDL_RenderFillRect(renderer, &player2_rect);
 }
 
-void move_player_up(player_t *player)
+void move_player_up(player_t *player, float ticks)
 {
-    player->y -= 20;
+    player->y -= PLAYER_SPEED * ticks;
 }
 
-void move_player_down(player_t *player)
+void move_player_down(player_t *player, float ticks)
 {
-    player->y += 20;
+    player->y += PLAYER_SPEED * ticks;
 }
