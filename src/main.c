@@ -7,6 +7,7 @@
 #include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_scancode.h>
+#include <SDL2/SDL_timer.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -59,6 +60,8 @@ ball_t ball = { 0 };
 player_t player1 = { 0 };
 player_t player2 = { 0 };
 bool playing = false;
+bool should_restart_round = false;
+uint32_t pause_timer = 0;
 
 /*************************
  * Prototypes
@@ -195,8 +198,8 @@ void game_render()
 
     render_ball(&ball);
     render_players();
-    render_score(player1, PLAYER_MARGIN, 0);
-    render_score(player2, WIDTH - 100 + PLAYER_MARGIN, 0);
+    render_score(player1, WIDTH/2 - (100*2), 0);
+    render_score(player2, WIDTH/2 + (100), 0);
 
     SDL_RenderPresent(renderer);
 }
@@ -256,6 +259,8 @@ void handle_events(void)
 void restart_round(void)
 {
     restart_ball_position(&ball);
+    should_restart_round = true;
+    pause_timer = SDL_GetTicks();
     /* restart_player_position(&player1); */
     /* restart_player_position(&player2); */
 }
@@ -315,39 +320,50 @@ void restart_ball_position(ball_t *ball)
 
 void update_ball(ball_t *ball, float elapsed)
 {
-    if (ball->x_speed == 0)
+    if (!should_restart_round)
     {
-        ball->x_speed = BALL_SPEED * (coin_flip()?1:-1);
-    }
-    if (ball->y_speed == 0)
-    {
-        ball->y_speed = BALL_SPEED * (coin_flip()?1:-1);
-    }
-    ball->x += ball->x_speed * elapsed;
-    ball->y += ball->y_speed * elapsed;
+        if (ball->x_speed == 0)
+        {
+            ball->x_speed = BALL_SPEED * (coin_flip()?1:-1);
+        }
+        if (ball->y_speed == 0)
+        {
+            ball->y_speed = BALL_SPEED * (coin_flip()?1:-1);
+        }
+        ball->x += ball->x_speed * elapsed;
+        ball->y += ball->y_speed * elapsed;
 
-    if (ball->x < ((float)BALL_SIZE/2))
-    {
-        ball->x_speed = fabs(ball->x_speed);
-        player2.score++;
-        SDL_Log("Score player 2: %d", player2.score);
-        restart_round();
-    }
-    if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
-    {
-        ball->x_speed = -fabs(ball->x_speed);
-        player1.score++;
-        SDL_Log("Score player 1: %d", player1.score);
-        restart_round();
-    }
+        if (ball->x < ((float)BALL_SIZE/2))
+        {
+            ball->x_speed = fabs(ball->x_speed);
+            player2.score++;
+            SDL_Log("Score player 2: %d", player2.score);
+            restart_round();
+        }
+        if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
+        {
+            ball->x_speed = -fabs(ball->x_speed);
+            player1.score++;
+            SDL_Log("Score player 1: %d", player1.score);
+            restart_round();
+        }
 
-    if (ball->y < ((float)BALL_SIZE/2))
-    {
-        ball->y_speed = fabs(ball->y_speed);
+        if (ball->y < ((float)BALL_SIZE/2))
+        {
+            ball->y_speed = fabs(ball->y_speed);
+        }
+        if( ball->y > HEIGHT - ((float)BALL_SIZE/2) )
+        {
+            ball->y_speed = -fabs(ball->y_speed);
+        }
     }
-    if( ball->y > HEIGHT - ((float)BALL_SIZE/2) )
+    else
     {
-        ball->y_speed = -fabs(ball->y_speed);
+        if (SDL_GetTicks() - pause_timer > 2000)
+        {
+            should_restart_round = false;
+        }
+
     }
 }
 
