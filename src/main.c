@@ -155,6 +155,7 @@ bool game_initialize(void)
 void game_update(float elapsed)
 {
     update_ball(&ball, elapsed);
+    update_players(elapsed);
 }
 
 void game_render()
@@ -197,10 +198,17 @@ void handle_events(void)
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
-        if(event.type == SDL_QUIT)
+        switch(event.type)
         {
-            run_game = false;
-            SDL_Log("Closing the game...");
+            case SDL_QUIT: {
+                run_game = false;
+                SDL_Log("Closing the game...");
+                break;
+            }
+            case SDL_KEYDOWN: {
+                break;
+            }
+
         }
     }
 }
@@ -285,7 +293,10 @@ player_t create_player(void)
 
 }
 
-void update_players(float elapsed);
+void update_players(float elapsed)
+{
+    SDL_Log("Update players\n");
+}
 
 void render_players(void)
 {
