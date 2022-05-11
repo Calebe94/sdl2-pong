@@ -18,11 +18,11 @@
 #define WIDTH         800
 #define HEIGHT        600
 #define BALL_SIZE     10
-#define BALL_SPEED    120
+#define BALL_SPEED    240
 #define PLAYER_WIDTH  20
 #define PLAYER_HEIGHT 75
 #define PLAYER_MARGIN 10
-#define PLAYER_SPEED  200.0f
+#define PLAYER_SPEED  400.0f
 
 /******** Colors *********/
 #define BLACK      0, 0, 0, 0
