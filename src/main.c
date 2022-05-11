@@ -4,6 +4,7 @@
 #include <SDL2/SDL_events.h>
 #include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_log.h>
+#include <SDL2/SDL_pixels.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_scancode.h>
 #include <stdio.h>
@@ -11,6 +12,7 @@
 #include <stdbool.h>
 #include <time.h>
 #include "SDL2/SDL.h"
+#include "SDL2/SDL_ttf.h"
 
 /*************************
  * MACROS
@@ -107,6 +109,7 @@ void move_player_down(player_t *player, float ticks);
 
 void restart_player_position(player_t *player);
 
+void render_score(player_t player, uint32_t x, uint32_t y);
 /*************************
  * Main
  *************************/
@@ -156,6 +159,7 @@ bool game_initialize(void)
             }
             else
             {
+                TTF_Init();
                 SDL_Log("Initialization done!");
             }
         }
@@ -191,6 +195,8 @@ void game_render()
 
     render_ball(&ball);
     render_players();
+    render_score(player1, PLAYER_MARGIN, 0);
+    render_score(player2, WIDTH - 100 + PLAYER_MARGIN, 0);
 
     SDL_RenderPresent(renderer);
 }
@@ -200,6 +206,7 @@ void game_close(void)
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    TTF_Quit();
 }
 
 void game_loop(void)
@@ -322,7 +329,6 @@ void update_ball(ball_t *ball, float elapsed)
     if (ball->x < ((float)BALL_SIZE/2))
     {
         ball->x_speed = fabs(ball->x_speed);
-        SDL_Log("Ponto para o player 2!");
         player2.score++;
         SDL_Log("Score player 2: %d", player2.score);
         restart_round();
@@ -330,7 +336,6 @@ void update_ball(ball_t *ball, float elapsed)
     if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
     {
         ball->x_speed = -fabs(ball->x_speed);
-        SDL_Log("Ponto para o player 1!");
         player1.score++;
         SDL_Log("Score player 1: %d", player1.score);
         restart_round();
@@ -469,4 +474,35 @@ void move_player_down(player_t *player, float ticks)
 void restart_player_position(player_t *player)
 {
     player->y = ((float)HEIGHT / 2);
+}
+
+void render_score(player_t player, uint32_t x, uint32_t y)
+{
+    SDL_Color White = {255, 255, 255, 255};
+    char score[128];
+    sprintf(score, "%d", player.score);
+
+    // https://www.wfonts.com/font/8bit-wonder
+    TTF_Font *Sans = TTF_OpenFont("8-BIT_WONDER.ttf", 24);
+
+    if(Sans)
+    {
+        /* SDL_Log("Exibindo mensagem do score %s", score); */
+        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, score,  White);
+        SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage);
+        SDL_Rect Message_rect; //create a rect
+        Message_rect.x = x;  //controls the rect's x coordinate
+        Message_rect.y = y; // controls the rect's y coordinte
+        Message_rect.w = 100; // controls the width of the rect
+        Message_rect.h = 100; // controls the height of the rect
+
+        SDL_RenderCopy(renderer, Message, NULL, &Message_rect);
+        /* SDL_RenderPresent(renderer); */
+
+        // Don't forget to free your surface and texture
+        SDL_FreeSurface(surfaceMessage);
+        SDL_DestroyTexture(Message);
+        TTF_CloseFont(Sans);
+    }
+
 }
