@@ -75,12 +75,16 @@ void game_loop(void);
 
 void handle_events(void);
 
+void restart_round(void);
+
 /******** Entities *********/
 void create_object();
 
 ball_t create_ball(int size);
 
 void render_ball(const ball_t *ball);
+
+void restart_ball_position(ball_t *ball);
 
 void update_ball(ball_t *ball, float elapsed);
 
@@ -100,6 +104,8 @@ void render_players(void);
 void move_player_up(player_t *player, float ticks);
 
 void move_player_down(player_t *player, float ticks);
+
+void restart_player_position(player_t *player);
 
 /*************************
  * Main
@@ -170,7 +176,8 @@ bool game_initialize(void)
 
 void game_update(float elapsed)
 {
-    if (playing) {
+    if (playing)
+    {
         update_ball(&ball, elapsed);
         update_players(elapsed);
         handle_colisions();
@@ -227,8 +234,8 @@ void handle_events(void)
             case SDL_KEYDOWN: {
                 switch (event.key.keysym.sym) {
                     case SDLK_SPACE: {
-                        SDL_Log("Game %s!", playing?"started":"paused");
                         playing = !playing;
+                        SDL_Log("Game %s!", playing?"started":"paused");
                         break;
                     }
                     default: break;
@@ -237,6 +244,13 @@ void handle_events(void)
             default: break;
         }
     }
+}
+
+void restart_round(void)
+{
+    restart_ball_position(&ball);
+    /* restart_player_position(&player1); */
+    /* restart_player_position(&player2); */
 }
 
 bool coin_flip(void)
@@ -284,6 +298,14 @@ void render_ball(const ball_t *ball)
     SDL_RenderFillRect(renderer, &rect);
 }
 
+void restart_ball_position(ball_t *ball)
+{
+    ball->x = ((float)WIDTH/2) - ((float)ball->size/2);
+    ball->y = ((float)HEIGHT/2) - ((float)ball->size/2);
+    ball->x_speed = 0;
+    ball->y_speed = 0;
+}
+
 void update_ball(ball_t *ball, float elapsed)
 {
     if (ball->x_speed == 0)
@@ -303,6 +325,7 @@ void update_ball(ball_t *ball, float elapsed)
         SDL_Log("Ponto para o player 2!");
         player2.score++;
         SDL_Log("Score player 2: %d", player2.score);
+        restart_round();
     }
     if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
     {
@@ -310,6 +333,7 @@ void update_ball(ball_t *ball, float elapsed)
         SDL_Log("Ponto para o player 1!");
         player1.score++;
         SDL_Log("Score player 1: %d", player1.score);
+        restart_round();
     }
 
     if (ball->y < ((float)BALL_SIZE/2))
@@ -440,4 +464,9 @@ void move_player_up(player_t *player, float ticks)
 void move_player_down(player_t *player, float ticks)
 {
     player->y += PLAYER_SPEED * ticks;
+}
+
+void restart_player_position(player_t *player)
+{
+    player->y = ((float)HEIGHT / 2);
 }
