@@ -1,6 +1,9 @@
 /*************************
  * INCLUDES
  *************************/
+#include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
+#include <SDL2/SDL_log.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_scancode.h>
 #include <stdio.h>
@@ -53,6 +56,7 @@ bool run_game = true;
 ball_t ball = { 0 };
 player_t player1 = { 0 };
 player_t player2 = { 0 };
+bool playing = false;
 
 /*************************
  * Prototypes
@@ -166,9 +170,11 @@ bool game_initialize(void)
 
 void game_update(float elapsed)
 {
-    update_ball(&ball, elapsed);
-    update_players(elapsed);
-    handle_colisions();
+    if (playing) {
+        update_ball(&ball, elapsed);
+        update_players(elapsed);
+        handle_colisions();
+    }
 }
 
 void game_render()
@@ -197,9 +203,9 @@ void game_loop(void)
         handle_events();
         uint32_t current_tick = SDL_GetTicks();
         uint32_t elapsed_ticks = current_tick - last_tick;
-        SDL_Log("%d", elapsed_ticks);
+        /* SDL_Log("%d", elapsed_ticks); */
         float elapsed_time = elapsed_ticks / 1000.0;
-        SDL_Log("%f", elapsed_time);
+        /* SDL_Log("%f", elapsed_time); */
         last_tick = current_tick;
         game_update(elapsed_time);
         game_render();
@@ -218,6 +224,17 @@ void handle_events(void)
                 SDL_Log("Closing the game...");
                 break;
             }
+            case SDL_KEYDOWN: {
+                switch (event.key.keysym.sym) {
+                    case SDLK_SPACE: {
+                        SDL_Log("Game %s!", playing?"started":"paused");
+                        playing = !playing;
+                        break;
+                    }
+                    default: break;
+                }
+            }
+            default: break;
         }
     }
 }
@@ -247,8 +264,8 @@ ball_t create_ball(int size)
         .x = ((float)WIDTH/2) - ((float)size/2),
         .y = ((float)HEIGHT/2) - ((float)size/2),
         .size = size,
-        .x_speed = BALL_SPEED * (coin_flip()?1:-1),
-        .y_speed = BALL_SPEED * (coin_flip()?1:-1),
+        /* .x_speed = BALL_SPEED * (coin_flip()?1:-1), */
+        /* .y_speed = BALL_SPEED * (coin_flip()?1:-1), */
     };
 
     return ball;
@@ -269,16 +286,30 @@ void render_ball(const ball_t *ball)
 
 void update_ball(ball_t *ball, float elapsed)
 {
+    if (ball->x_speed == 0)
+    {
+        ball->x_speed = BALL_SPEED * (coin_flip()?1:-1);
+    }
+    if (ball->y_speed == 0)
+    {
+        ball->y_speed = BALL_SPEED * (coin_flip()?1:-1);
+    }
     ball->x += ball->x_speed * elapsed;
     ball->y += ball->y_speed * elapsed;
 
     if (ball->x < ((float)BALL_SIZE/2))
     {
         ball->x_speed = fabs(ball->x_speed);
+        SDL_Log("Ponto para o player 2!");
+        player2.score++;
+        SDL_Log("Score player 2: %d", player2.score);
     }
     if( ball->x > WIDTH - ((float)BALL_SIZE/2) )
     {
         ball->x_speed = -fabs(ball->x_speed);
+        SDL_Log("Ponto para o player 1!");
+        player1.score++;
+        SDL_Log("Score player 1: %d", player1.score);
     }
 
     if (ball->y < ((float)BALL_SIZE/2))
