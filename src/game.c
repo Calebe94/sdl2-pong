@@ -3,6 +3,7 @@
  *************************/
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <stdio.h>
 #include "SDL2/SDL_ttf.h"
 
 #include "config.h"
@@ -76,6 +77,8 @@ void game_render()
 {
     SDL_SetRenderDrawColor(renderer, BLACK);
     SDL_RenderClear(renderer);
+    char player1_score[2];
+    char player2_score[2];
 
     if (playing == false && rounds == 0)
     {
@@ -89,8 +92,10 @@ void game_render()
 
     render_ball(&ball);
     render_players();
-    render_score(player1, WIDTH/2 - (100*2), 0);
-    render_score(player2, WIDTH/2 + (100), 0);
+    sprintf(player1_score, "%d", player1.score);
+    sprintf(player2_score, "%d", player2.score);
+    render_message(player1_score, WIDTH/2 - (100*2), 0, 100, 100);
+    render_message(player2_score, WIDTH/2 + (100), 0, 100, 100);
 
     if (should_restart_round)
     {
