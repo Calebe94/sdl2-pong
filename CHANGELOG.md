@@ -9,13 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-* Added CHANGELOG
-* Added README
-* Added game screenshots
+* Added CHANGELOG;
+* Added README;
+* Added game screenshots;
+* Added `ball_entity.{c,h}` files with ball functions and variables;
+* Added `player_entity.{c,h}` files with players functions and variables;
+* Added `game.{c,h}` files with game handlers, functions and variables;
+* Added `ui.{c,h}` files with funtions to handle ui elements;
+* Added `config.h` file with config macros;
+* Added `types.h` file types definitions;
 
 ### Fixed
 
 ### Changed
+
+* Moved all functions from `main.c` to its independent files;
 
 ### Removed
 
