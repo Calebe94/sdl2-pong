@@ -38,4 +38,8 @@ void restart_round(void);
 bool coin_flip(void);
 
 void handle_colisions(void);
+
+void show_controls();
+
+void show_scores();
 #endif // GAME_H_

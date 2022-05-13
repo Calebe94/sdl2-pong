@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added `ui.{c,h}` files with funtions to handle ui elements;
 * Added `config.h` file with config macros;
 * Added `types.h` file types definitions;
+* Added controls message on pause and start screen;
 
 ### Fixed
 

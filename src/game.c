@@ -77,25 +77,25 @@ void game_render()
 {
     SDL_SetRenderDrawColor(renderer, BLACK);
     SDL_RenderClear(renderer);
-    char player1_score[2];
-    char player2_score[2];
-
     if (playing == false && rounds == 0)
     {
         render_message("Press space", WIDTH/2 - 300/2, HEIGHT/3 - 40/2, 300, 40);
         render_message("to start", WIDTH/2 - 300/2, HEIGHT/3 + 40/2 , 300, 40);
+        show_controls();
     }
     else if (playing == false && rounds > 0)
     {
         render_message("Game paused", WIDTH/2 - 300/2, HEIGHT/3 - 40/2, 300, 40);
+        show_controls();
+        show_scores();
+    }
+    else
+    {
+        show_scores();
     }
 
     render_ball(&ball);
     render_players();
-    sprintf(player1_score, "%d", player1.score);
-    sprintf(player2_score, "%d", player2.score);
-    render_message(player1_score, WIDTH/2 - (100*2), 0, 100, 100);
-    render_message(player2_score, WIDTH/2 + (100), 0, 100, 100);
 
     if (should_restart_round)
     {
@@ -206,4 +206,22 @@ void handle_colisions(void)
     {
         ball.x_speed = -fabs(ball.x_speed);
     }
+}
+
+void show_controls()
+{
+    render_message("w - up", PLAYER_MARGIN*2, HEIGHT/2 - 40 - PLAYER_HEIGHT, 120, 20);
+    render_message("a - down", PLAYER_MARGIN*2, HEIGHT/2 + 40 + PLAYER_HEIGHT, 140, 20);
+    render_message("arrow - up", WIDTH - PLAYER_MARGIN*2 - 150, HEIGHT/2 - 40 - PLAYER_HEIGHT, 150, 20);
+    render_message("arrow - down", WIDTH - PLAYER_MARGIN*2 - 180, HEIGHT/2 + 40 + PLAYER_HEIGHT, 180, 20);
+}
+
+void show_scores()
+{
+    char player1_score[2];
+    char player2_score[2];
+    sprintf(player1_score, "%d", player1.score);
+    sprintf(player2_score, "%d", player2.score);
+    render_message(player1_score, WIDTH/2 - (100*2), 0, 100, 100);
+    render_message(player2_score, WIDTH/2 + (100), 0, 100, 100);
 }
