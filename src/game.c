@@ -2,10 +2,15 @@
  * INCLUDES
  *************************/
 #include <stdbool.h>
-#include <SDL2/SDL.h>
 #include <stdio.h>
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#else
+#include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
-
+#endif
 #include "config.h"
 #include "ball_entity.h"
 #include "player_entity.h"

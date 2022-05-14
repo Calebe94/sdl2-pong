@@ -1,7 +1,12 @@
 /*************************
  * INCLUDES
  *************************/
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <SDL.h>
+#else
 #include "SDL2/SDL.h"
+#endif
 #include "game.h"
 #include "config.h"
 #include "ball_entity.h"

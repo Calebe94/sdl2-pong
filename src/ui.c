@@ -1,8 +1,15 @@
 /*************************
  * INCLUDES
  *************************/
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#else
 #include "SDL2/SDL.h"
 #include "SDL2/SDL_ttf.h"
+#endif
 #include "config.h"
 #include "game.h"
 #include "ui.h"
