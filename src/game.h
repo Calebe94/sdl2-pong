@@ -31,6 +31,12 @@ void game_close(void);
 
 void game_loop(void);
 
+void last_tick_init();
+
+void game_loop_ems(void);
+
+bool is_running();
+
 void handle_events(void);
 
 void restart_round(void);

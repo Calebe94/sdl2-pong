@@ -37,11 +37,17 @@ int main(int argc, char *argv[])
         player1 = create_player();
         player2 = create_player();
 #ifdef __EMSCRIPTEN__
-        emscripten_set_main_loop(game_loop, 0, 1);
+        last_tick_init();
+        emscripten_set_main_loop(game_loop_ems, 0, 1);
 #endif
 #ifndef __EMSCRIPTEN__
-        game_loop();
+        while(is_running())
+        {
+            game_loop_ems();
+        }
+
 #endif
+
     }
 
     game_close();

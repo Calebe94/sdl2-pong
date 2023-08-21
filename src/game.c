@@ -25,6 +25,7 @@ SDL_Renderer *renderer = NULL;
 bool playing = false;
 uint32_t rounds = 0;
 bool run_game = true;
+uint32_t last_tick = 0;
 
 /*************************
  * Functions definitions
@@ -121,7 +122,7 @@ void game_close(void)
 
 void game_loop(void)
 {
-    uint32_t last_tick = SDL_GetTicks();
+    last_tick_init();
     while(run_game)
     {
         handle_events();
@@ -134,6 +135,29 @@ void game_loop(void)
         game_update(elapsed_time);
         game_render();
     }
+}
+
+void last_tick_init()
+{
+    last_tick = SDL_GetTicks();
+}
+
+void game_loop_ems(void)
+{
+    handle_events();
+    uint32_t current_tick = SDL_GetTicks();
+    uint32_t elapsed_ticks = current_tick - last_tick;
+    /* SDL_Log("%d", elapsed_ticks); */
+    float elapsed_time = elapsed_ticks / 1000.0;
+    /* SDL_Log("%f", elapsed_time); */
+    last_tick = current_tick;
+    game_update(elapsed_time);
+    game_render();
+}
+
+bool is_running()
+{
+    return run_game;
 }
 
 void handle_events(void)
