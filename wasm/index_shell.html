@@ -16,7 +16,7 @@
             }
             textarea.emscripten {
                 font-family: monospace;
-                width: 80%;
+                width: 100%;
                 display: none;
             }
             div.emscripten {
@@ -101,6 +101,7 @@
             }
             .canvas_wrapper {
                 display: flex;
+                width: 100%;
             }
         </style>
     </head>
@@ -114,52 +115,8 @@
         <div class="emscripten">
             <progress value="0" max="100" id="progress" hidden="1"></progress>
         </div>
-        <div class="canvas_wrapper">
-            <canvas
-                class="emscripten"
-                id="canvas"
-                oncontextmenu="event.preventDefault()"
-                tabindex="-1"
-            ></canvas>
-        </div>
 
-        <div class="controller">
-            <button
-                class="controls"
-                style="width: 70%"
-                data-key="ArrowUp"
-                data-which="38"
-            >
-                ⇧
-            </button>
 
-            <!-- <button
-                 class="controls"
-                 style="width: 35%"
-                 data-key="ArrowLeft"
-                 data-which="37"
-                 >
-                 ⇦
-                 </button>
-                 <button
-                 class="controls"
-                 style="width: 35%"
-                 data-key="ArrowRight"
-                 data-which="39"
-                 >
-                 ⇨
-                 </button> -->
-
-            <button
-                class="controls"
-                style="width: 70%"
-                data-key="ArrowDown"
-                data-which="40"
-            >
-                ⇩
-            </button>
-        </div>
-        <hr />
         <h2>SDL2 Pong</h2>
         <a
             href="https://git.calebe.dev.br/sdl2-pong/about/"
@@ -167,8 +124,38 @@
             rel="noopener noreferrer"
             >source</a
         >
-        <textarea class="emscripten" id="output" rows="8"></textarea>
+
         <hr />
+
+        <div class="canvas_wrapper">
+            <canvas
+                class="emscripten"
+                id="canvas"
+                oncontextmenu="event.preventDefault()"
+                <!-- tabindex="-1" -->
+            ></canvas>
+
+        </div>
+
+        <div class="controller">
+            <button
+                class="controls"
+                style="width: 100%"
+                data-key="ArrowUp"
+                data-which="38"
+            >
+                ⇧
+            </button>
+            <button
+                class="controls"
+                style="width: 100%"
+                data-key="ArrowDown"
+                data-which="40"
+            >
+                ⇩
+            </button>
+        </div>
+        <textarea class="emscripten" id="output" rows="8"></textarea>
         <div class="emscripten" id="status">Downloading...</div>
         <script type="text/javascript">
             var statusElement = document.getElementById('status');
@@ -287,14 +274,6 @@
             };
 
             Module.postRun.push(function () {
-                var transform_multiplier = 0.75;
-                var minimum_transform_multiplier = 0.6;
-                while ((Module.canvas.width * transform_multiplier) > window.innerWidth && transform_multiplier > minimum_transform_multiplier) {
-                    transform_multiplier = transform_multiplier - 0.05;
-                }
-                // Module.canvas.parentNode.style.transform = `scale(${transform_multiplier})`;
-                var margin_removal = (window.innerWidth * (transform_multiplier > minimum_transform_multiplier ? transform_multiplier - 0.1 : transform_multiplier)) / 2;
-                // Module.canvas.parentNode.style.margin = `-${margin_removal * 0.15}px -${margin_removal}px`;
                 Array.from(document.querySelectorAll('.controls')).forEach(
                     function (control) {
                         if ('ontouchstart' in document.documentElement) {
