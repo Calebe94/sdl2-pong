@@ -2,7 +2,7 @@
 
 A [Pong] game written in **C** using [SDL2].
 
-<img src=".screenshots/start.png" width="400px">
+<img src=".screenshots/start1.png" width="400px">
 
 ## Dependencies
 
@@ -31,6 +31,12 @@ $ bin/game
 $ # or
 $ make run
 ```
+
+## Developer
+
+| <img src="https://github.com/Calebe94.png" width="200px"> |
+|:---------------------------------------------------------:|
+| [Edimar Calebe Castanho (Calebe94)](https://github.com/Calebe94) |
 
 # License
 
