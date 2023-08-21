@@ -54,22 +54,22 @@ void handle_players_bounds(void)
 void handle_players_inputs(float elapsed)
 {
     const uint8_t *keyboard_state = SDL_GetKeyboardState(NULL);
-    if (keyboard_state[SDL_SCANCODE_W])
+    if (keyboard_state[SDL_SCANCODE_UP])
     {
         move_player_up(&player1, elapsed);
     }
-    if (keyboard_state[SDL_SCANCODE_S])
+    if (keyboard_state[SDL_SCANCODE_DOWN])
     {
         move_player_down(&player1, elapsed);
     }
-    if (keyboard_state[SDL_SCANCODE_UP])
-    {
-        move_player_up(&player2, elapsed);
-    }
-    if (keyboard_state[SDL_SCANCODE_DOWN])
-    {
-        move_player_down(&player2, elapsed);
-    }
+    /* if (keyboard_state[SDL_SCANCODE_UP]) */
+    /* { */
+    /*     move_player_up(&player2, elapsed); */
+    /* } */
+    /* if (keyboard_state[SDL_SCANCODE_DOWN]) */
+    /* { */
+    /*     move_player_down(&player2, elapsed); */
+    /* } */
 }
 
 void render_players(void)

@@ -75,6 +75,7 @@ void game_update(float elapsed)
     {
         update_ball(&ball, elapsed);
         update_players(elapsed);
+        player2.y = ball.y;
         handle_colisions();
     }
 }
@@ -239,10 +240,10 @@ void handle_colisions(void)
 
 void show_controls()
 {
-    render_message("w - up", PLAYER_MARGIN*2, HEIGHT/2 - 40 - PLAYER_HEIGHT, 120, 20);
-    render_message("a - down", PLAYER_MARGIN*2, HEIGHT/2 + 40 + PLAYER_HEIGHT, 140, 20);
-    render_message("arrow - up", WIDTH - PLAYER_MARGIN*2 - 150, HEIGHT/2 - 40 - PLAYER_HEIGHT, 150, 20);
-    render_message("arrow - down", WIDTH - PLAYER_MARGIN*2 - 180, HEIGHT/2 + 40 + PLAYER_HEIGHT, 180, 20);
+    render_message("arrow - up", PLAYER_MARGIN*2, HEIGHT/2 - 40 - PLAYER_HEIGHT, 120, 20);
+    render_message("arrow - down", PLAYER_MARGIN*2, HEIGHT/2 + 40 + PLAYER_HEIGHT, 140, 20);
+    /* render_message("arrow - up", WIDTH - PLAYER_MARGIN*2 - 150, HEIGHT/2 - 40 - PLAYER_HEIGHT, 150, 20); */
+    /* render_message("arrow - down", WIDTH - PLAYER_MARGIN*2 - 180, HEIGHT/2 + 40 + PLAYER_HEIGHT, 180, 20); */
 }
 
 void show_scores()
