@@ -26,6 +26,7 @@ bool playing = false;
 uint32_t rounds = 0;
 bool run_game = true;
 uint32_t last_tick = 0;
+float reaction_time = 0;
 
 /*************************
  * Functions definitions
@@ -75,7 +76,25 @@ void game_update(float elapsed)
     {
         update_ball(&ball, elapsed);
         update_players(elapsed);
-        player2.y = ball.y;
+
+        reaction_time += elapsed;
+
+        if(reaction_time > 0.02)
+        {
+            if (player2.y > ball.y)
+            {
+                move_player_up(&player2, elapsed);
+            }
+
+            if (player2.y < ball.y)
+            {
+                move_player_down(&player2, elapsed);
+            }
+
+            /* player2.y = ball.y; */
+            reaction_time = 0;
+        }
+
         handle_colisions();
     }
 }
