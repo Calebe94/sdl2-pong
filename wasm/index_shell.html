@@ -1,13 +1,46 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head>
+        <link rel="stylesheet" href="/static/css/retro.css">
+        <link rel="stylesheet" href="/static/css/carousel.css">
+        <link rel="stylesheet" href="/static/css/fontello.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+        <!-- HTML Meta Tags -->
+        <meta name="description" content="Esta é a página pessoal e blog de Calebe94.">
+
+        <!-- Google / Search Engine Tags -->
+        <meta itemprop="name" content="calebe.dev.br">
+        <meta itemprop="description" content="Esta é a página pessoal e blog de Calebe94.">
+        <meta itemprop="image" content="https://media.calebe.dev.br/images/calebe94_1200.png">
+
+        <!-- Facebook Meta Tags -->
+        <meta property="og:url" content="https://calebe.dev.br/site">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="calebe.dev.br">
+        <meta property="og:description" content="Esta é a página pessoal e blog de Calebe94.">
+        <meta property="og:image" content="https://media.calebe.dev.br/images/calebe94.png">
+
+        <!-- Twitter Meta Tags -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="calebe.dev.br">
+        <meta name="twitter:description" content="Esta é a página pessoal e blog de Calebe94.">
+        <meta name="twitter:image" content="https://media.calebe.dev.br/images/calebe94.png">
+
+        <!-- Meta Tags Generated via http://heymeta.com -->
+
+        <meta name="twitter:card" content="summary_large_image">
+
         <meta charset="utf-8" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no" />
-        <link rel="stylesheet" href="https://blog.calebe.dev.br/static/css/retro.css">
+        <link rel="stylesheet" href="/static/css/retro.css">
         <link rel="shortcut icon" href="favicon.ico" />
         <title>SDL2 Pong</title>
         <style>
+            @import “/static/css/fontello”;
             .emscripten {
                 padding-right: 0;
                 margin-left: auto;
@@ -116,14 +149,40 @@
             <progress value="0" max="100" id="progress" hidden="1"></progress>
         </div>
 
+        <button onclick="topFunction()" id="top-button" title="Go to top">Top</button>
+        <header class="site-header">
+
+            <nav class="nav-top">
+                <h3>
+                    <div class="whoami-animation">$ whoami</div>
+                    <a class="result-animation" href="/">&#8203</a>
+                </h3>
+                <h5><a href="/posts"a>✉️ Posts </a></h5>
+                <h5><a href="/uses.html">⚒️ Uses </a></h5>
+                <h5><a href="/recommends/">🔖   Favoritos </a></h5>
+                <!-- <h5><a href="/curriculum.html">📋    Currículo </a></h5> -->
+                <h5><a href="//links.calebe.dev.br">🔗 Links </a></h5>
+                <h5><a href="//git.calebe.dev.br">🚧 Projetos </a></h5>
+            </nav>
+        </header>
+        <main>
+        <hr>
 
         <h2>SDL2 Pong</h2>
-        <a
-            href="https://git.calebe.dev.br/sdl2-pong/about/"
-            target="_blank"
-            rel="noopener noreferrer"
-            >source</a
-        >
+        <p>
+            Dê vida ao clássico Pong com este emocionante projeto em C, usando a poderosa biblioteca SDL2.
+            Este repositório oferece uma base sólida para você criar seu próprio jogo Pong, mergulhando nos conceitos essenciais de detecção de colisões, controle de movimento e interação com o jogador.
+            Explore o código-fonte, aprenda com a implementação e aproveite a oportunidade para personalizar e expandir o jogo, adicionando recursos como placares, efeitos sonoros e níveis de dificuldade.
+            Comece sua jornada de desenvolvimento de jogos hoje mesmo!
+            <center>
+                <a
+                    href="https://github.com/Calebe94/sdl2-pong"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >Link para o repositório</a
+                >
+            </center>
+        </p>
 
         <hr />
 
@@ -139,7 +198,7 @@
 
         <div class="controller">
             <button
-                class="controls"
+                class="controls nav-toggle"
                 style="width: 100%"
                 data-key="ArrowUp"
                 data-which="38"
@@ -147,7 +206,15 @@
                 ⇧
             </button>
             <button
-                class="controls"
+                class="controls nav-toggle"
+                style="width: 100%"
+                data-key=" "
+                data-which="32"
+            >
+                START/PAUSE
+            </button>
+            <button
+                class="controls nav-toggle"
                 style="width: 100%"
                 data-key="ArrowDown"
                 data-which="40"
@@ -157,7 +224,41 @@
         </div>
         <textarea class="emscripten" id="output" rows="8"></textarea>
         <div class="emscripten" id="status">Downloading...</div>
+        <hr>
+        <footer>
+        <p>
+        <center>
+        <h3>Contatos</h3>
+        <br />
+        <a style="text-decoration: none;" href="https://t.me/calebe94"><i class="icon-telegram"></i>Telegram</a>
+        <a style="text-decoration: none;" href="mailto:contato@calebe.dev.br"><i class="icon-mail"></i>Email</a>
+        <a style="text-decoration: none;" href="https://github.com/Calebe94"><i class="icon-github-circled"></i>Github</a>
+        <a style="text-decoration: none;" href="https://gitlab.com/Calebe94"><i class="icon-gitlab"></i>Gitlab</a>
+        <a style="text-decoration: none;" href="https://instagram.com/ocalebe94"><i class="icon-instagram"></i>Instagram</a>
+        </center>
+        </p>
+        </footer>
+        </main>
         <script type="text/javascript">
+            // Get the button
+            let mybutton = document.getElementById("top-button");
+
+            // When the user scrolls down 20px from the top of the document, show the button
+            window.onscroll = function() {scrollFunction()};
+
+            function scrollFunction() {
+                if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                    mybutton.style.display = "block";
+                } else {
+                    mybutton.style.display = "none";
+                }
+            }
+
+            // When the user clicks on the button, scroll to the top of the document
+            function topFunction() {
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            }
             var statusElement = document.getElementById('status');
             var progressElement = document.getElementById('progress');
             var spinnerElement = document.getElementById('spinner');
