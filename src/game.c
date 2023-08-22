@@ -26,7 +26,10 @@ bool playing = false;
 uint32_t rounds = 0;
 bool run_game = true;
 uint32_t last_tick = 0;
-float reaction_time = 0;
+float elapsed_time_agregator = 0;
+float reaction_time = 0.020;
+uint32_t level = 1;
+uint32_t level_up = 0;
 
 /*************************
  * Functions definitions
@@ -77,9 +80,8 @@ void game_update(float elapsed)
         update_ball(&ball, elapsed);
         update_players(elapsed);
 
-        reaction_time += elapsed;
-
-        if(reaction_time > 0.02)
+        elapsed_time_agregator += elapsed;
+        if(elapsed_time_agregator > reaction_time)
         {
             if (player2.y > ball.y)
             {
@@ -92,7 +94,22 @@ void game_update(float elapsed)
             }
 
             /* player2.y = ball.y; */
-            reaction_time = 0;
+            elapsed_time_agregator = 0;
+        }
+
+        if(is_multipleof_5(player1.score) && player1.score != 0)
+        {
+            if (level_up==0)
+            {
+                level_up = 1;
+                level++;
+                reaction_time -= 0.001;
+                printf("score: %d - Level UP: %d - reaction time: %f seconds\n", player1.score, level, reaction_time);
+            }
+        }
+        else
+        {
+            level_up = 0;
         }
 
         handle_colisions();
@@ -243,7 +260,7 @@ void handle_colisions(void)
     };
     if(SDL_HasIntersection(&ball_rect, &player1_rect))
     {
-        ball.x_speed = fabs(ball.x_speed);
+        ball.x_speed = fabs(ball.x_speed) + level;
     }
     SDL_Rect player2_rect = {
         .x = WIDTH - PLAYER_WIDTH - PLAYER_MARGIN,
@@ -253,7 +270,7 @@ void handle_colisions(void)
     };
     if(SDL_HasIntersection(&ball_rect, &player2_rect))
     {
-        ball.x_speed = -fabs(ball.x_speed);
+        ball.x_speed = -fabs(ball.x_speed) + level;
     }
 }
 
@@ -273,4 +290,15 @@ void show_scores()
     sprintf(player2_score, "%d", player2.score);
     render_message(player1_score, WIDTH/2 - (100*2), 0, 100, 100);
     render_message(player2_score, WIDTH/2 + (100), 0, 100, 100);
+}
+
+int is_multipleof_5 (int n)
+{
+    while ( n > 0 )
+        n = n - 5;
+
+    if ( n == 0 )
+        return 1;
+
+    return 0;
 }

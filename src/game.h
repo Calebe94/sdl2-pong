@@ -48,4 +48,6 @@ void handle_colisions(void);
 void show_controls();
 
 void show_scores();
+
+int is_multipleof_5 (int n);
 #endif // GAME_H_
