@@ -29,15 +29,17 @@ jobs:
           sudo apt-get install -y libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
       - name: Install Emscripten SDK
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           git clone https://github.com/emscripten-core/emsdk.git $HOME/emsdk
           cd $HOME/emsdk
           ./emsdk install latest
           ./emsdk activate latest
-          source ./emsdk_env.sh
 
       - name: Build Game
-        run: make all
+        run: |
+          source ./$HOME/emsdk/emsdk_env.sh
+          make all
 
       - name: Create Release
         id: create_release
