@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: debian-bookworm
+    runs-on: debian-stable
 
     steps:
       - name: Checkout code
@@ -23,7 +23,7 @@ jobs:
             sdl-deps-
 
       - name: Install Dependencies
-        # if: steps.cache-deps.outputs.cache-hit != 'true'
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
