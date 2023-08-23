@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: debian-stable
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -28,17 +28,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 
-      - name: Install Emscripten SDK
-        run: |
-          git clone https://github.com/emscripten-core/emsdk.git $HOME/emsdk
-          cd $HOME/emsdk
-          ./emsdk install latest
-          ./emsdk activate latest
+      # - name: Install Emscripten SDK
+      #   run: |
+      #     git clone https://github.com/emscripten-core/emsdk.git $HOME/emsdk
+      #     cd $HOME/emsdk
+      #     ./emsdk install latest
+      #     ./emsdk activate latest
 
       - name: Build Game
         run: |
-          source $HOME/emsdk/emsdk_env.sh
-          make all
+          # source $HOME/emsdk/emsdk_env.sh
+          make compile
 
       - name: Create Release
         id: create_release
@@ -53,8 +53,8 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Compress wasm folder
-        run: tar czf wasm.tar.gz wasm
+      # - name: Compress wasm folder
+      #   run: tar czf wasm.tar.gz wasm
 
       - name: Upload Game and wasm to Release
         id: upload-assets
@@ -62,6 +62,6 @@ jobs:
         with:
           files: |
             bin/game
-            wasm.tar.gz
+            # wasm.tar.gz
           token: ${{ secrets.GITHUB_TOKEN }}
           release_id: ${{ steps.create_release.outputs.id }}
