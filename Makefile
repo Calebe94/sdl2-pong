@@ -23,7 +23,7 @@ ${WASM_DIR}:
 ${OUTPUT_DIR}:
 	@mkdir -p ${OUTPUT_DIR}
 
-all: ${OUTPUT_DIR}
+compile: ${OUTPUT_DIR}
 	$(CC) $(FLAGS) $(SOURCE) $(LIBS) -o $(BIN)
 
 run: all
@@ -32,12 +32,17 @@ run: all
 web: ${WASM_DIR}
 	${EMCC} ${SOURCE} --shell-file wasm/index_shell.html -o ${WASM_DIR}/index.html -s WASM=2 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_WEBGL2=1 -s SDL2_IMAGE_FORMATS='["png"]'\
     $(FLAGS) \
-    -I/usr/include/SDL2 \
-    -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf \
-    --preload-file "Pixeboy.ttf"
+	-I/usr/include/SDL2 \
+	-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf \
+	--preload-file "Pixeboy.ttf"
 
 web-run: web
 	python3 -m http.server -d ${WASM_DIR}
 
-.PHONY: ${OUTPUT_DIR} web
+all: compile web
+
+clean:
+	rm -fr ${WASM_DIR}/index.data ${WASM_DIR}/index.html ${WASM_DIR}/index.js ${WASM_DIR}/index.wasm ${WASM_DIR}/index.wasm.js ${OUTPUT_DIR}
+
+.PHONY: ${OUTPUT_DIR} web compile web-run clean
 # end
