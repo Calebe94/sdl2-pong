@@ -1,0 +1,58 @@
+name: Build and Release Game
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Cache Dependencies
+        id: cache-deps
+        uses: actions/cache@v2
+        with:
+          path: /usr/include/SDL2
+          key: sdl-deps-${{ hashFiles('**/*.c', '**/*.h') }}
+          restore-keys: |
+            sdl-deps-
+
+      - name: Install Dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libsdl2-gfx-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
+
+      - name: Build Game
+        run: make all
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Release notes for ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Compress wasm folder
+        run: tar czf wasm.tar.gz wasm
+
+      - name: Upload Game and wasm to Release
+        id: upload-assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bin/game
+            wasm.tar.gz
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release_id: ${{ steps.create_release.outputs.id }}
