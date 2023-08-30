@@ -33,7 +33,7 @@ web: ${WASM_DIR}
 	${EMCC} ${SOURCE} --shell-file wasm/index_shell.html -o ${WASM_DIR}/index.html -s WASM=2 -s USE_SDL=2 -s USE_SDL_TTF=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2 -s USE_WEBGL2=1 -s SDL2_IMAGE_FORMATS='["png"]'\
     $(FLAGS) \
 	-I/usr/include/SDL2 \
-	-lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf \
+	-lSDL2  -lSDL2_mixer -lSDL2_ttf \
 	--preload-file "Pixeboy.ttf"
 
 web-run: web
